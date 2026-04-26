@@ -20,7 +20,8 @@ body {
 
 textarea {
   width: 100%;
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   border-radius: 6px;
   border: none;
   margin-top: 10px;
