@@ -52,23 +52,20 @@ function startTest() {
   setupDiv.style.display = "none";
   testDiv.style.display = "block";
 
-  // reset scroll position
-  passageEl.scrollTop = 0;
-  window.lastScrollTop = 0;
   clearInterval(timerInterval);
 }
 
 /* TIMER */
 function startTimer() {
   timerInterval = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       inputEl.disabled = true;
       alert("Time's up!");
-      return;
     }
-    timeLeft--;
-    timerEl.textContent = timeLeft;
   }, 1000);
 }
 
@@ -110,64 +107,55 @@ inputEl.addEventListener("input", () => {
     }
   });
 
-  /* ✅ AUTO SCROLL (non-intrusive, smooth) */
-  const activeIndex = inputText.length;
-  const activeSpan = spans[activeIndex];
+  /* ✅ FIXED AUTO SCROLL */
+  // AUTO SCROLL (FINAL FIX)
 
-  if (activeSpan) {
-    const spanTop = activeSpan.offsetTop;
-    const boxHeight = passageEl.clientHeight;
-    const passageScrollTop = passageEl.scrollTop;
+const activeIndex = inputText.length;
+const activeSpan = spans[activeIndex];
 
-    if (!window.lastScrollTop) {
-      window.lastScrollTop = 0;
-    }
+if (activeSpan) {
+  const spanTop = activeSpan.offsetTop;
+  const boxHeight = passageEl.clientHeight;
 
-    const minimumIndexBeforeScroll = 180;
-    const nearEnd = activeIndex > spans.length - 25;
-
-    // scroll only when char crosses mid-point AND is advancing by enough margin
-    if (
-      activeIndex > minimumIndexBeforeScroll &&
-      !nearEnd &&
-      spanTop > passageScrollTop + boxHeight * 0.6 &&
-      spanTop > window.lastScrollTop + 18
-    ) {
-      passageEl.scrollTop += 28;
-      window.lastScrollTop = spanTop;
-    }
+  // Store last scroll trigger position
+  if (!window.lastScrollTop) {
+    window.lastScrollTop = 0;
   }
 
+  const minimumIndexBeforeScroll = 200;
+  const nearEnd = activeIndex > spans.length - 20;
+
+  // Only scroll when moving to a NEW line (not same line)
+  if (
+    activeIndex > minimumIndexBeforeScroll &&
+    !nearEnd &&
+    spanTop > boxHeight / 2 &&
+    spanTop > window.lastScrollTop + 20   // 👈 key fix
+  ) {
+    passageEl.scrollTop += 25; // scroll one line
+    window.lastScrollTop = spanTop; // update last line
+  }
+}
+
   // Accuracy
-  let totalTyped = inputText.length;
-  let totalAttempts = totalTyped + mistakes;
-  let accuracy = totalAttempts > 0 ? (correct / totalAttempts) * 100 : 100;
+  let total = inputText.length + mistakes;
+  let accuracy = total > 0 ? (correct / total) * 100 : 100;
   accuracyEl.textContent = accuracy.toFixed(2);
 
   // WPM
-  if (timerStarted && startTime) {
-    let timeElapsed = (new Date() - startTime) / 1000 / 60;
-    let words = inputText.length / 5;
-    let wpm = timeElapsed > 0 ? words / timeElapsed : 0;
-    wpmEl.textContent = Math.round(wpm);
-  } else {
-    wpmEl.textContent = 0;
-  }
+  let timeElapsed = (new Date() - startTime) / 1000 / 60;
+  let words = inputText.length / 5;
+  let wpm = timeElapsed > 0 ? words / timeElapsed : 0;
+  wpmEl.textContent = Math.round(wpm);
 });
 
 /* RESTART */
 function restartTest() {
   clearInterval(timerInterval);
-  timerStarted = false;
-  if (timerInterval) clearInterval(timerInterval);
+
   testDiv.style.display = "none";
   setupDiv.style.display = "block";
 
   document.getElementById("givenText").value = "";
   document.getElementById("timeValue").value = "";
-  inputEl.value = "";
-  passageEl.innerHTML = "";
-  mistakes = 0;
-  lastLength = 0;
-  window.lastScrollTop = 0;
 }
