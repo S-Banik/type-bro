@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TypeBro</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- SETUP -->
+  <div id="setup">
+    <h2>Typing Practice</h2>
+
+    <textarea id="givenText" placeholder="Paste your paragraph..."></textarea>
+
+    <div class="controls">
+      <input type="number" id="timeValue" placeholder="Enter time" min="1">
+      <select id="timeUnit">
+        <option value="sec">Seconds</option>
+        <option value="min">Minutes</option>
+      </select>
+
+      <button onclick="startTest()">Start Test</button>
+    </div>
+  </div>
+
+  <!-- TEST -->
+  <div id="test">
+    <div class="passage" id="passage"></div>
+
+    <textarea id="input" placeholder="Start typing..."></textarea>
+
+    <div class="stats">
+      <div>Accuracy: <span id="accuracy">100</span>%</div>
+      <div>WPM: <span id="wpm">0</span></div>
+      <div>Time: <span id="timer">0</span>s</div>
+    </div>
+
+    <button onclick="restartTest()">Restart</button>
+  </div>
+
+</div>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
